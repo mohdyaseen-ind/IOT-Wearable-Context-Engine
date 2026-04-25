@@ -42,7 +42,7 @@ python server.py
 ```
 
 ### 4. Open the Sandbox
-Double click `index.html` in your browser. 
+Open `index.html` in your browser. 
 - Use the **User Context Sandbox** on the left to simulate a medical event (e.g., Drag SpO2 down to 85% while the Sleep Tracker app is open).
 - Watch the **Sarthi Agent** in the middle panel dynamically reason through the data.
 - Watch the **Watch UI** on the right autonomously react without a single button press.
