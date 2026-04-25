@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarthi - The Zero-Instruction Wearable Agent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-mesh"></div>
+    
+    <header class="top-nav">
+        <div class="logo">
+            <i class="fa-solid fa-microchip"></i>
+            <h1>Sarthi Sandbox</h1>
+        </div>
+        <p class="subtitle">The Zero-Instruction Context Engine</p>
+    </header>
+
+    <main class="sandbox-container">
+        
+        <!-- Panel 1: User's Context (The Input) -->
+        <section class="panel context-panel">
+            <div class="panel-header">
+                <i class="fa-solid fa-person"></i>
+                <h2>User Context Sandbox</h2>
+            </div>
+            <p class="panel-desc">You are the user. Move the sliders to simulate life events. Sarthi will read this data via sensors.</p>
+            
+            <div class="controls-container">
+                <!-- Heart Rate Slider -->
+                <div class="control-group">
+                    <label>
+                        <span><i class="fa-solid fa-heart" style="color: #ff2d55;"></i> Heart Rate</span>
+                        <span id="slider-hr-val" class="val-display">70 BPM</span>
+                    </label>
+                    <input type="range" id="slider-hr" min="40" max="180" value="70">
+                </div>
+
+                <!-- Speed Slider -->
+                <div class="control-group">
+                    <label>
+                        <span><i class="fa-solid fa-location-arrow" style="color: #34c759;"></i> GPS Speed</span>
+                        <span id="slider-speed-val" class="val-display">0 km/h</span>
+                    </label>
+                    <input type="range" id="slider-speed" min="0" max="100" value="0">
+                </div>
+
+                <!-- Blood Oxygen (SpO2) Slider -->
+                <div class="control-group">
+                    <label>
+                        <span><i class="fa-solid fa-lungs" style="color: #0ea5e9;"></i> Blood Oxygen (SpO2)</span>
+                        <span id="slider-spo2-val" class="val-display">98%</span>
+                    </label>
+                    <input type="range" id="slider-spo2" min="70" max="100" value="98">
+                </div>
+
+                <!-- Body Temp Slider -->
+                <div class="control-group">
+                    <label>
+                        <span><i class="fa-solid fa-temperature-half" style="color: #f59e0b;"></i> Body Temp</span>
+                        <span id="slider-temp-val" class="val-display">36.5°C</span>
+                    </label>
+                    <input type="range" id="slider-temp" min="35.0" max="41.0" step="0.1" value="36.5">
+                </div>
+
+                <!-- Active App Dropdown -->
+                <div class="control-group">
+                    <label>
+                        <span><i class="fa-solid fa-mobile-screen"></i> Active App</span>
+                    </label>
+                    <select id="select-app" class="custom-select">
+                        <option value="Clock">Default Clock</option>
+                        <option value="Beads Counter">Beads Counter (Prayer)</option>
+                        <option value="Maps Navigation">Maps Navigation</option>
+                        <option value="Sleep Tracker">Sleep Tracker</option>
+                    </select>
+                </div>
+                
+                <div class="quick-inject-section">
+                    <p class="inject-title">Quick Scenarios</p>
+                    <div class="inject-buttons">
+                        <button class="inject-btn" onclick="injectScenario('prayer')">Morning Prayer</button>
+                        <button class="inject-btn" onclick="injectScenario('traffic')">Traffic Commute</button>
+                        <button class="inject-btn alert-btn" onclick="injectScenario('panic')">Silent Panic Attack</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel 2: Sarthi Agent (The AI Brain) -->
+        <section class="panel brain-panel">
+            <div class="panel-header">
+                <i class="fa-solid fa-brain"></i>
+                <h2>Sarthi Agent</h2>
+                <div class="connection-status" id="ws-status">
+                    <div class="dot online"></div> Online
+                </div>
+            </div>
+            <p class="panel-desc">Real-time LLM reasoning based on sensor data.</p>
+            
+            <div class="chat-container">
+                <!-- Profiler Chat Bubble -->
+                <div class="chat-message bot profiler-msg">
+                    <div class="avatar"><i class="fa-solid fa-user-secret"></i></div>
+                    <div class="bubble">
+                        <div class="bubble-title">Context Profiler</div>
+                        <div class="bubble-text" id="chat-profiler">
+                            "Heart rate is 70 BPM, speed is 0. Everything looks completely normal."
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Chat Bubble -->
+                <div class="chat-message bot action-msg">
+                    <div class="avatar"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="bubble">
+                        <div class="bubble-title">Action Kernel</div>
+                        <div class="bubble-text" id="chat-action">
+                            "I will remain quietly in the background."
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="telemetry-ticker">
+                <i class="fa-solid fa-satellite-dish"></i> Processing Telemetry...
+            </div>
+        </section>
+
+        <!-- Panel 3: The Output (Watch) -->
+        <section class="panel output-panel">
+            <div class="panel-header">
+                <i class="fa-brands fa-apple"></i>
+                <h2>Watch UI</h2>
+            </div>
+            <p class="panel-desc">Autonomously reacts without user input.</p>
+            
+            <div class="apple-watch-case">
+                <div class="digital-crown"></div>
+                <div class="side-button"></div>
+                
+                <div class="watch-screen" id="watch-screen">
+                    <!-- Base Watch Face -->
+                    <div class="watch-face-modular" id="watch-face-base">
+                        <div class="complication-top">
+                            <span class="date" id="watch-date">MON 25</span>
+                            <span class="active-app-pill" id="watch-app"><i class="fa-solid fa-clock"></i></span>
+                        </div>
+                        <div class="time-large" id="watch-time">09:41</div>
+                        
+                        <div class="complications-row">
+                            <div class="complication circular ring-comp">
+                                <svg viewBox="0 0 36 36" class="circular-chart">
+                                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="circle" stroke-dasharray="80, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <i class="fa-solid fa-person-running mini-icon"></i>
+                            </div>
+                            
+                            <div class="complication circular hr-comp">
+                                <span class="hr-value" id="watch-hr">70</span>
+                                <i class="fa-solid fa-heart heartbeat" id="watch-hr-icon" style="color:#ff2d55"></i>
+                            </div>
+                            
+                            <div class="complication circular battery-comp">
+                                <span class="batt-value" id="watch-battery">85</span>
+                                <span class="batt-symbol">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Notification Overlay -->
+                    <div class="notification-overlay" id="watch-alert-overlay">
+                        <div class="focus-icon" id="watch-alert-icon">
+                            <i class="fa-solid fa-moon"></i>
+                        </div>
+                        <h3 id="watch-alert-title">Focus Mode</h3>
+                        <p id="watch-alert-desc">Notifications silenced.</p>
+                        
+                        <div class="sos-countdown" id="sos-countdown" style="display: none;">
+                            Calling in <span id="sos-timer">10</span>s...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
